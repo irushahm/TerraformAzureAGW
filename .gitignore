@@ -1,0 +1,12 @@
+# Ignore Terraform state files
+*.tfstate
+*.tfstate.backup
+.terraform/
+
+# Ignore temporary files
+*~
+.DS_Store
+
+# Ignore logs and other build artifacts
+logs/
+build/
