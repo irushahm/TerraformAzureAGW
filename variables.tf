@@ -6,7 +6,7 @@ variable "host_os" {
 variable "prefix" {
   description = "Prefix for naming resources"
   type        = string
-  default     = "azsa" # Ensure this starts with an alphanumeric character
+  default     = "irusha" # Ensure this starts with an alphanumeric character
 }
 
 variable "vm_count" {

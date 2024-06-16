@@ -9,8 +9,6 @@ terraform {
 
 provider "azurerm" {
   features {}
-
-  subscription_id = "79254532-8de0-4334-b22a-601a305290be"
 }
 
 resource "azurerm_resource_group" "rg-01" {
@@ -116,8 +114,7 @@ resource "azurerm_virtual_network_peering" "vnet-02-to-vnet-01" {
 
 
 resource "azurerm_public_ip" "pip-01" {
-  count               = var.vm_count + 1
-  name                = "${var.prefix}-rg-01-pip-${count.index + 1}"
+  name                = "${var.prefix}-rg-01-pip-01"
   resource_group_name = azurerm_resource_group.rg-01.name
   location            = azurerm_resource_group.rg-01.location
   allocation_method   = "Static"
@@ -139,7 +136,6 @@ resource "azurerm_network_interface" "vnic-01" {
     name                          = "internal"
     subnet_id                     = azurerm_subnet.vnet-01-subnet-01.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.pip-01[count.index].id
   }
 
   tags = {
@@ -216,7 +212,7 @@ resource "azurerm_application_gateway" "appgw1" {
 
   frontend_ip_configuration {
     name                 = "appgw1-ip-configuration"
-    public_ip_address_id = azurerm_public_ip.pip-01[2].id
+    public_ip_address_id = azurerm_public_ip.pip-01.id
   }
 
   backend_address_pool {
@@ -252,11 +248,10 @@ resource "azurerm_application_gateway" "appgw1" {
 }
 
 data "azurerm_public_ip" "pip-01-data" {
-  count               = var.vm_count
-  name                = azurerm_public_ip.pip-01[count.index].name
+  name                = azurerm_public_ip.pip-01.name
   resource_group_name = azurerm_resource_group.rg-01.name
 }
 
 output "public_ip_addresses" {
-  value = [for i in range(var.vm_count) : "${azurerm_linux_virtual_machine.vm-01[i].name}: ${data.azurerm_public_ip.pip-01-data[i].ip_address}"]
+  value = "${data.azurerm_public_ip.pip-01-data.ip_address}"
 }
