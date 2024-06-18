@@ -1,67 +1,101 @@
-# Terraform Azure Infrastructure Provisioning
+# Deploy Azure Load Balancer with 2 VMs with Terraform
 
 ## Introduction
 
-This repository contains Terraform code to provision Azure infrastructure for hosting a simple web application. The infrastructure setup includes configuring virtual networks, subnets, network security groups, virtual machines, public IP addresses, and an application gateway on Azure.
+This Terraform configuration sets up an Azure infrastructure featuring a load balancer with two Linux virtual machines (VMs) for a development environment. The setup ensures secure communication between resources and facilitates load balancing for improved application performance and availability.
 
-The web application will be hosted behind the Azure Application Gateway, providing load balancing and security features.
+![Architecture Diagram](./img/azure_load_balancer_diagram.png)
 
 ## Prerequisites
 
-Before you begin, ensure you have met the following requirements:
+Before you begin, ensure you have the following:
 
-- Terraform installed locally.
-- Azure subscription.
+- Terraform installed on your local machine.
+- An Azure account with appropriate permissions.
+- SSH keys generated (for Linux VM access).
+- Basic knowledge of Terraform and Azure concepts.
 
-## Usage
+## Architecture Overview
 
-1. Clone the repository:
+This Terraform script will create the following resources:
 
-    ```bash
-    git clone <repository-url>
-    ```
+- A Resource Group.
+- Two Virtual Networks.
+- Subnets for each Virtual Network.
+- A Network Security Group (NSG) with security rules.
+- Network Interfaces for the VMs.
+- Public IP Addresses.
+- Two Linux Virtual Machines (VMs).
+- An Application Gateway configured as a load balancer with backend pool and routing rules.
 
-2. Initialize Terraform:
+## Configuration Details
 
-    ```bash
-    terraform init
-    ```
+The resources are configured to allow secure communication within the environment. The Application Gateway will distribute incoming traffic across the two VMs, ensuring high availability and reliability.
 
-3. Review and adjust the variables in `variables.tf` as needed.
+## File Structure
 
-4. Apply the Terraform configuration:
+- `main.tf`: Contains the main Terraform configuration.
+- `variables.tf`: Contains the variable definitions used in `main.tf`.
+- `customdata.tpl`: Contains custom data script for VMs.
+- `host_os-ssh-script.tpl`: Contains the script to be executed by the provisioner based on the host OS.
 
-    ```bash
-    terraform apply
-    ```
+## Variables
 
-5. After successful provisioning, you can access the resources deployed in your Azure account.
+The following variables are used in the configuration:
 
-## Configuration
+- `prefix`: A prefix for naming resources.
+- `vm_count`: Number of virtual machines to create (set to 2 for this setup).
+- `host_os`: Operating system of the host executing Terraform.
 
-The Terraform configuration in this repository includes the following resources:
+Define these variables in a `variables.tf` file or pass them directly during the Terraform apply command.
 
-- **Azure Provider Configuration**: Specifies the required provider and version.
-- **Azure Resource Group**: Creates an Azure resource group for grouping resources.
-- **Azure Virtual Networks (VNets)**: Creates two virtual networks with subnets.
-- **Azure Network Security Group (NSG)**: Sets up a network security group for controlling traffic.
-- **Azure Network Security Rule**: Defines a network security rule for inbound traffic.
-- **Azure Subnet Network Security Group Association**: Associates NSG with subnets.
-- **Azure Virtual Network Peering**: Sets up peering between VNets.
-- **Azure Public IP Address**: Allocates public IP addresses for VMs and resources.
-- **Azure Network Interface**: Creates network interfaces for VMs.
-- **Azure Linux Virtual Machine**: Deploys Linux virtual machines.
-- **Azure Application Gateway**: Configures an application gateway.
+## Deployment Steps
 
-## Outputs
+1. **Clone the Repository**
 
-The Terraform configuration provides the following outputs:
+```sh
+git clone <repository_url>
+cd <repository_directory>
+```
 
-- **Public IP Addresses**: Lists the public IP addresses associated with the deployed VMs.
+2. **Initialize Terraform**
 
-## Cleanup
+```sh
+terraform init
+```
 
-To tear down the infrastructure created by Terraform, run:
+3. **Plan the Deployment**
 
-```bash
-terraform destroy
+```sh
+terraform plan
+```
+
+4. **Apply the Configuration**
+
+```sh
+terraform apply --auto-approve
+```
+
+## Accessing the Web Application
+
+The Application Gateway will also provide an IP address for accessing the load-balanced service.
+
+## Accessing the Web Application
+
+Type the application gateway public ip address in your browser.
+   
+## Cleaning Up
+   ```sh
+   terraform destroy --auto-approve
+   ```
+
+---
+
+## Author
+
+**Irusha Malalgoda**
+
+- GitHub: [irushahm](https://github.com/irushahm)
+- LinkedIn: [ihasantha](https://www.linkedin.com/in/ihasantha)
+
+For any questions or feedback, feel free to reach out via the above platforms.

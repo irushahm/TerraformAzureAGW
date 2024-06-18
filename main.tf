@@ -13,7 +13,7 @@ provider "azurerm" {
 
 resource "azurerm_resource_group" "rg-01" {
   name     = "${var.prefix}-rg-01"
-  location = "southeastasia"
+  location = var.region
 
   tags = {
     environment = "dev"
@@ -127,7 +127,7 @@ resource "azurerm_public_ip" "pip-01" {
 
 
 resource "azurerm_network_interface" "vnic-01" {
-  count               = var.vm_count
+  count               = 2
   name                = "${var.prefix}-rg-01-vnic-${count.index + 1}"
   resource_group_name = azurerm_resource_group.rg-01.name
   location            = azurerm_resource_group.rg-01.location
@@ -144,7 +144,7 @@ resource "azurerm_network_interface" "vnic-01" {
 }
 
 resource "azurerm_linux_virtual_machine" "vm-01" {
-  count               = var.vm_count
+  count               = 2
   name                = "${var.prefix}-rg-01-vm-${count.index + 1}"
   resource_group_name = azurerm_resource_group.rg-01.name
   location            = azurerm_resource_group.rg-01.location
